@@ -6,16 +6,17 @@ import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class InspectorGadget {
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("Start");
-		InspectorGadget dpoi = new InspectorGadget();
-		dpoi.doIt();
-		System.out.println("End");
+		System.out.println("===Start===");
+		InspectorGadget inspectorGadget = new InspectorGadget();
+		inspectorGadget.doIt();
+		System.out.println("===End=====");
 
 	}
 
@@ -33,29 +34,26 @@ public class InspectorGadget {
 			// For each row, iterate through each columns
 			Iterator<Cell> cellIterator = row.cellIterator();
 			Cell cell = row.getCell(2);
-			System.out.println(cell.toString());
+
+			switch (cell.getCellType()) {
+			case Cell.CELL_TYPE_STRING:
+				System.out.print(cell.getStringCellValue() + "\t");
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				System.out.print(NumberToTextConverter.toText(cell.getNumericCellValue()) + "\t");
+				// System.out.print(cell.getNumericCellValue() + "\t");
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				System.out.print(cell.getBooleanCellValue() + "\t");
+				break;
+			default:
+			}
 			
-			/*while (cellIterator.hasNext()) {
-				Cell cell = cellIterator.next();
-				switch (cell.getCellType()) {
-				case Cell.CELL_TYPE_STRING:
-					System.out.print(cell.getStringCellValue() + "\t");
-					break;
-				case Cell.CELL_TYPE_NUMERIC:
-					System.out.print(cell.getNumericCellValue() + "\t");
-					break;
-				case Cell.CELL_TYPE_BOOLEAN:
-					System.out.print(cell.getBooleanCellValue() + "\t");
-					break;
-				default:
-				}
-			}*/
-			
-			
+			System.out.println("");
+
 		}
-		
+
 		wb.close();
 	}
 
-	
 }
