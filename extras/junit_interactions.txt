@@ -10,6 +10,8 @@ public class Test {
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
 
+
+// this was the original interaction
     driver = new FirefoxDriver();
     baseUrl = "https://www.example.com/“;
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -21,6 +23,49 @@ public class Test {
     driver.findElement(By.id("TRG_313")).clear();
     driver.findElement(By.id("TRG_313")).sendKeys(“1111111111”);
     driver.findElement(By.xpath("//div[@id='VWG_304']/div/div/div/div/div/span")).click();
+    
+// this is the full login interaction and clicks    
+    driver.get(baseUrl + "/default.aspx?page=home");
+    driver.findElement(By.xpath("//table[@id='iconsTable']/tbody/tr[2]/td[2]/table/tbody/tr/td[2]/table/tbody/tr[2]/td/a")).click();
+    driver.findElement(By.linkText("SANITIZED")).click();
+    driver.findElement(By.id("loginBox_UserName")).clear();
+    driver.findElement(By.id("loginBox_UserName")).sendKeys("");
+    driver.findElement(By.id("loginBox_password")).clear();
+    driver.findElement(By.id("loginBox_password")).sendKeys("");
+    driver.findElement(By.id("loginBox_Button1")).click();
+    driver.findElement(By.cssSelector("img[alt=\"EthnikiForce\"]")).click();
+    driver.findElement(By.id("TRG_14")).clear();
+    driver.findElement(By.id("TRG_14")).sendKeys("");
+    driver.findElement(By.id("TRG_13")).clear();
+    driver.findElement(By.id("TRG_13")).sendKeys("SANITIZED");
+    driver.findElement(By.id("TRG_14")).click();
+    driver.findElement(By.id("TRG_14")).click();
+    driver.findElement(By.id("TRG_3")).click();
+    driver.findElement(By.id("TRG_13")).click();
+    driver.findElement(By.id("TRG_13")).click();
+    driver.findElement(By.id("TRG_13")).clear();
+    driver.findElement(By.id("TRG_13")).sendKeys("");
+    driver.findElement(By.cssSelector("span.cs3")).click();
+    driver.findElement(By.id("TXT_44")).click();
+    driver.findElement(By.id("TRG_313")).click();
+    driver.findElement(By.id("TRG_313")).clear();
+   
+   
+    driver.findElement(By.id("TRG_313")).sendKeys("2222222222");
+    driver.findElement(By.xpath("//div[@id='VWG_304']/div/div/div/div/div/span")).click();
+    driver.findElement(By.id("TRG_313")).clear();
+    driver.findElement(By.id("TRG_313")).sendKeys("2222222222");
+    driver.findElement(By.xpath("//div[@id='VWG_304']/div/div/div/div/div/span")).click();
+    driver.findElement(By.id("TRG_313")).clear();
+    driver.findElement(By.id("TRG_313")).sendKeys("2222222222");
+    driver.findElement(By.xpath("//div[@id='VWG_304']/div/div/div/div/div/span")).click();
+    
+    
+    
+    
+    
+    
+    
   }
 
 
