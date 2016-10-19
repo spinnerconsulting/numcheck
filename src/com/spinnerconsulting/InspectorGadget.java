@@ -12,7 +12,7 @@ public class InspectorGadget {
 	public static void main(String[] args) throws Exception {
 		System.out.println("===Start===");
 		System.out.println("Welcome to the InspectorGadget");
-		System.out.println("Push Version 19 Oct x:xx");
+		System.out.println("Push Version 19 Oct 10:33");
 		System.out.println(" ");
 		System.out.println("Please log in");
 		System.out.println("Username");        // Prompt for username
