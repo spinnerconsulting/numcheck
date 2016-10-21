@@ -1,14 +1,8 @@
-/**
- * Code for Olzhas
- * 
- */
-
 package com.spinnerconsulting;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -18,22 +12,13 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Excel {
-	
+
 	public static final int NO_RECORD_LIMIT = -1;
-	
-	private int maxRecords;
 
+	private int maxRecords = NO_RECORD_LIMIT;
+	private WebDriver wd;
 
-	public static void main(String[] args) throws Exception {
-		Excel e = new Excel();
-		e.doIt();
-	}
-
-	private boolean checkValue(String value) {
-		return true;
-	}
-
-	void doIt() throws Exception {
+	void runQueries() throws Exception {
 
 		InputStream inp = new FileInputStream("extras/demo.xlsx");
 		XSSFWorkbook wb = new XSSFWorkbook(inp);
@@ -45,7 +30,6 @@ public class Excel {
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			// For each row, iterate through each columns
-			Iterator<Cell> cellIterator = row.cellIterator();
 			Cell cell = row.getCell(2);
 
 			switch (cell.getCellType()) {
@@ -55,10 +39,10 @@ public class Excel {
 			case Cell.CELL_TYPE_NUMERIC:
 				String cellValue = NumberToTextConverter.toText(cell.getNumericCellValue());
 				System.out.print(cellValue + "\t");
-				// System.out.print(cell.getNumericCellValue() + "\t");
+				
 				Cell cell2 = row.createCell(3);
 				cell2.setCellType(Cell.CELL_TYPE_BOOLEAN);
-				cell2.setCellValue(checkValue(cellValue));
+				cell2.setCellValue(wd.valueExists(cellValue));
 				break;
 			case Cell.CELL_TYPE_BOOLEAN:
 				System.out.print(cell.getBooleanCellValue() + "\t");
@@ -75,11 +59,21 @@ public class Excel {
 		FileOutputStream os = new FileOutputStream("extras/demo.xlsx");
 		wb.write(os);
 		os.close();
+		wd.close();
 
 	}
 
 	public void setMaxRecords(int i) {
 		maxRecords = i;
+	}
+
+	public void setWebDriver(WebDriver s) {
+		wd = s;
+	}
+
+	public static void main(String[] args) throws Exception {
+		Excel e = new Excel();
+		e.runQueries();
 	}
 
 }

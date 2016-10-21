@@ -1,7 +1,3 @@
-/**
- *  Code for Pete
- */
-
 package com.spinnerconsulting;
 
 import java.util.Scanner;
@@ -11,7 +7,6 @@ public class InspectorGadget {
 	public static void main(String[] args) throws Exception {
 		System.out.println("===Start===");
 		System.out.println("Welcome to the InspectorGadget");
-		System.out.println("Push Version 19 Oct 10:33");
 		System.out.println(" ");
 		System.out.println("Please log in");
 
@@ -48,24 +43,18 @@ public class InspectorGadget {
 		igr.close();
 		igw.close();
 
-		// code to visualize entry
-		// System.out.println("You entered "+ inspectorgadgetusername + " " +
-		// inspectorgadgetpassword);
-		// System.out.println(norecordlimit);
-		// System.out.println(inspectorgadgetrecordinput);
-		// System.out.println(nomaximumnumber);
-		// System.out.println(inspectorgadgetrecordlimit);
-		// System.out.println(inspectorgadgeturl);
-
-		Selenium s = new Selenium();
-		s.setUsername(username);
-		s.setPassword(password);
-		s.setBaseUrl(url);
+		WebDriver wd = new WebDriver();
+		wd.setUsername(username);
+		wd.setPassword(password);
+		wd.setBaseUrl(url);
+		wd.init();
 
 		Excel e = new Excel();
+		e.setWebDriver(wd);
 		e.setMaxRecords(recordLimit);
 
-		// e.doIt();
+		e.runQueries();
+		wd.close();
 		System.out.println("===End=====");
 
 	}
