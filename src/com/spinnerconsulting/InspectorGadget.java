@@ -1,61 +1,66 @@
 package com.spinnerconsulting;
 
-import java.util.Scanner;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class InspectorGadget {
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("===Start===");
-		System.out.println("Welcome to the InspectorGadget");
-		System.out.println(" ");
-		System.out.println("Please log in");
+		args = new String[] { "-u", "testuser", "-p", "test", "-path", "extras/demo.xlsx", "-base", "http://www.example.com",  "-max", "1000" };
+		// args = new String[]{ "-help" };
 
-		// Username input handling
-		// TODO - check for various bad inputs
-		System.out.print("Username: ");
-		Scanner igu = new Scanner(System.in);
-		String username = igu.nextLine();
+		Options options = new Options();
+		options.addOption("help", "print this message and exit");
+		options.addOption("v", "verbose output for debugging");
+		options.addOption("u", true, "the username for web requests");
+		options.addOption("p", true, "the password for web requests");
+		options.addOption("path", true, "the path to the Excel source file");
+		options.addOption("max", true, "the max records to read from Excel source file [default: no limit]");
+		options.addOption("base", true, "the base URL to the host (ex: http://www.example.com)");
 
-		// Password input handling
-		// TODO - check for invalid inputs and do not echo password to console
-		System.out.print("Password: ");
-		Scanner igp = new Scanner(System.in);
-		String password = igp.nextLine();
-
-		System.out.println("Welcome " + username);
-		System.out.println(" ");
-
-		// Max records input handling
-		// TODO - test this area and try to break
-		System.out.print("Maximum number of records to check [no limit]: ");
-		Scanner igr = new Scanner(System.in);
-		String input = igr.nextLine();
-		int recordLimit = (input.equals("") ? Excel.NO_RECORD_LIMIT : Integer.parseInt(input));
-
-		// Base URL input handling
-		// TODO - test this area and try to break
-		System.out.println("Enter the base URL:");
-		Scanner igw = new Scanner(System.in);
-		String url = igw.nextLine();
-
-		igu.close();
-		igp.close();
-		igr.close();
-		igw.close();
-
+		CommandLineParser parser = new DefaultParser();
+		HelpFormatter formatter = new HelpFormatter();
 		WebDriver wd = new WebDriver();
-		wd.setUsername(username);
-		wd.setPassword(password);
-		wd.setBaseUrl(url);
-		wd.init();
-
 		Excel e = new Excel();
-		e.setWebDriver(wd);
-		e.setMaxRecords(recordLimit);
 
+		try {
+			CommandLine line = parser.parse(options, args);
+
+			if (line.hasOption("help") || line.getOptions().length == 0) {
+				formatter.printHelp("InspectorGadget", options);
+				return;
+			}
+
+			if (line.hasOption("u")) {
+				wd.setUsername(line.getOptionValue("u"));
+			}
+			if (line.hasOption("p")) {
+				wd.setPassword(line.getOptionValue("p"));
+			}
+			if (line.hasOption("path")) {
+				e.setFilePath(line.getOptionValue("path"));
+			}
+			if (line.hasOption("max")) {
+				e.setMaxRecords(Integer.parseInt(line.getOptionValue("max")));
+			}
+			if (line.hasOption("base")) {
+				wd.setBaseUrl(line.getOptionValue("base"));
+			}
+
+		} catch (ParseException exp) {
+			System.err.println(exp.getMessage());
+			formatter.printHelp("InspectorGadget", options);
+			return;
+		}
+
+		wd.init();
+		e.setWebDriver(wd);
 		e.runQueries();
 		wd.close();
-		System.out.println("===End=====");
 
 	}
 

@@ -97,6 +97,7 @@ public class WebDriver {
 	}
 
 	void setBaseUrl(String baseUrl) {
+		System.out.println("here-" + baseUrl);
 		this.baseUrl = baseUrl;
 	}
 
