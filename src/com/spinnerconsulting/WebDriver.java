@@ -16,11 +16,16 @@ public class WebDriver {
 	private String username;
 	private String password;
 	private String baseUrl;
+	private String searchString;
 	private HtmlPage contextPage;
 	private WebClient webClient;
 
 	/**
+	 * 
+	 * Call after WebDriver object creation to setup environment.
+	 * 
 	 * Performs login and navigates to contextPage containing lookup form.
+	 * 
 	 */
 	void init() {
 		try {
@@ -28,9 +33,10 @@ public class WebDriver {
 			HtmlPage page = webClient.getPage(baseUrl + "/default.aspx?page=home");
 			HtmlPage page2 = ((HtmlAnchor) page.getByXPath(
 					"//table[@id='iconsTable']/tbody/tr[2]/td[2]/table/tbody/tr/td[2]/table/tbody/tr[2]/td/a")).click();
-			((HtmlTextInput) page2.getHtmlElementById("loginBox_UserName")).setValueAttribute(username);
-			((HtmlTextInput) page2.getHtmlElementById("loginBox_password")).setValueAttribute(password);
-			contextPage = ((HtmlSubmitInput) page2.getByXPath("//img[@alt='SANITIZED']")).click();
+			HtmlPage page3 = ((HtmlAnchor) page2.getByXPath("//*[.='Ηλεκτρονικό Γραφείο Συνεργατών']")).click();
+			((HtmlTextInput) page3.getHtmlElementById("loginBox_UserName")).setValueAttribute(username);
+			((HtmlTextInput) page3.getHtmlElementById("loginBox_password")).setValueAttribute(password);
+			contextPage = ((HtmlSubmitInput) page3.getByXPath("//img[@alt='EthnikiForce']")).click();
 
 		} catch (FailingHttpStatusCodeException e) {
 			e.printStackTrace();
@@ -58,7 +64,7 @@ public class WebDriver {
 			((HtmlTextInput) contextPage.getHtmlElementById("TRG_313")).setValueAttribute(query);
 			HtmlPage page4 = ((HtmlSpan) contextPage.getByXPath("//div[@id='VWG_304']/div/div/div/div/div/span"))
 					.click();
-			retVal = page4.asText().contains("TRUE CONDITION");
+			retVal = page4.asText().contains(searchString);
 
 		} catch (FailingHttpStatusCodeException e) {
 			e.printStackTrace();
@@ -71,21 +77,16 @@ public class WebDriver {
 		return retVal;
 	}
 
+	/**
+	 * Closes out the WebClient session.
+	 * 
+	 * Call this when all queries are complete.
+	 * 
+	 */
 	void close() {
 		if (webClient != null) {
 			webClient.close();
 		}
-	}
-
-	public static void main(String[] args) {
-		WebDriver s = new WebDriver();
-		s.setUsername("test");
-		s.setPassword("test");
-		s.setBaseUrl("http://www.spinnerconsulting.com");
-		s.init();
-		s.valueExists("TestValue");
-		s.valueExists("TestValue");
-		s.close();
 	}
 
 	void setUsername(String username) {
@@ -98,6 +99,14 @@ public class WebDriver {
 
 	void setBaseUrl(String baseUrl) {
 		this.baseUrl = baseUrl;
+	}
+
+	public String getSearchString() {
+		return searchString;
+	}
+
+	public void setSearchString(String searchString) {
+		this.searchString = searchString;
 	}
 
 }

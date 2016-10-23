@@ -26,60 +26,56 @@ public class Excel {
 		XSSFSheet sheet = wb.getSheetAt(0);
 
 		Iterator<Row> rowIterator = sheet.iterator();
-		
+
 		// Traversing over each row of XLSX file
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
-		
-			// For each row, iterate through each columns
-			
 			Cell cell = row.getCell(2);
-		
+
 			boolean value;
-			
+
 			if (cell != null && cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-				
+
 				String cellValue = NumberToTextConverter.toText(cell.getNumericCellValue());
 				Cell cell2 = row.createCell(3);
 				cell2.setCellValue("True");
-				
-				//System.out.println("CellValue " + cellValue + "\t");
-				//System.out.println(wd.valueExists("222"));
-				//value is null, cant figure out why.
-				//value = wd.valueExists(cellValue);
-				
-			}else if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING && cell.toString() != "Number"){
+
+				// System.out.println("CellValue " + cellValue + "\t");
+				// System.out.println(wd.valueExists("222"));
+				// value is null, cant figure out why.
+				// value = wd.valueExists(cellValue);
+
+			} else if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING && cell.toString() != "Number") {
 				String cellValue = (cell.getStringCellValue());
 				Cell cell2 = row.createCell(3);
 				cell2.setCellValue("True");
-			}else if(cell != null && cell.getCellType() == Cell.CELL_TYPE_BOOLEAN){
-				boolean cellValue =(cell.getBooleanCellValue());
+			} else if (cell != null && cell.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
+				boolean cellValue = (cell.getBooleanCellValue());
 				Cell cell2 = row.createCell(3);
 				cell2.setCellValue("True");
-			}else if(cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK){
+			} else if (cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK) {
 				System.out.println("BLANK VALUE");
-			}else if(cell != null && cell.getCellType() == Cell.CELL_TYPE_ERROR){
-				byte cellValue =(cell.getErrorCellValue());
+			} else if (cell != null && cell.getCellType() == Cell.CELL_TYPE_ERROR) {
+				byte cellValue = (cell.getErrorCellValue());
 				System.out.println(cellValue);
-			}else if(cell != null && cell.getCellType() == Cell.CELL_TYPE_FORMULA){
+			} else if (cell != null && cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
 				System.out.println("Formula");
 			}
-			
-			else{
+
+			else {
 				System.out.println(cell);
-				
+
 			}
 
 			System.out.println("");
-		
+
 		}
-		//
-		
+
 		inp.close();
 
 		FileOutputStream os = new FileOutputStream(filePath);
 		wb.write(os);
-		os.close();		
+		os.close();
 		wd.close();
 
 	}
@@ -87,21 +83,18 @@ public class Excel {
 	public void setMaxRecords(int i) {
 		maxRecords = i;
 	}
-	
+
 	public void setWebDriver(WebDriver s) {
 		wd = s;
-		
+	}
+
+	public void setFilePath(String value) {
+		filePath = value;
 	}
 
 	public static void main(String[] args) throws Exception {
 		Excel e = new Excel();
 		e.runQueries();
 	}
-
-	public void setFilePath(String value) {
-		filePath = value;		
-	}
-
-
 
 }
