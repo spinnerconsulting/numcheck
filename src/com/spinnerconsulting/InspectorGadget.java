@@ -10,7 +10,13 @@ import org.apache.commons.cli.ParseException;
 public class InspectorGadget {
 
 	public static void main(String[] args) throws Exception {
-		args = new String[] { "-u", "testuser", "-p", "test", "-path", "extras/demo.xlsx", "-base", "http://www.example.com",  "-max", "1000" };
+		// to pass variables in eclipse: Run Configurations.../Arguments/Program
+		// Arguments, and enter below:
+		// -u testuser -p test -path extras/demo.xlsx -base
+		// http://www.example.com -max 1000
+		// args = new String[] { "-u", "testuser", "-p", "test", "-path",
+		// "extras/demo.xlsx", "-base", "http://www.example.com", "-max", "1000"
+		// };
 		// args = new String[]{ "-help" };
 
 		Options options = new Options();
