@@ -25,7 +25,7 @@ public class Excel {
 		XSSFSheet sheet = wb.getSheetAt(0);
 
 		Iterator<Row> rowIterator = sheet.iterator();
-		WebDriver wdTest = new WebDriver();
+		//WebDriver wdTest = new WebDriver();
 
 		// Traversing over each row of XLSX file
 		//rowStart starts with 2, assuming 1st row is for the header info
@@ -58,13 +58,13 @@ public class Excel {
 		        	  
 		        	  String cellValue = NumberToTextConverter.toText(c.getNumericCellValue());
 		        	  
-		        	  if (wdTest.valueExists(cellValue) == true && Integer.parseInt(cellValue) % 2 == 1){
+		        	  if (wd.valueExists(cellValue) == true && Integer.parseInt(cellValue) % 2 == 1){
 		        		  cell2.setCellValue("True and odd");
-		        	  }else if (wdTest.valueExists(cellValue) == true && Integer.parseInt(cellValue) % 2 == 0){
+		        	  }else if (wd.valueExists(cellValue) == true && Integer.parseInt(cellValue) % 2 == 0){
 		        		  cell2.setCellValue("True and even");
-		        	  }else if (wdTest.valueExists(cellValue) == false && Integer.parseInt(cellValue) % 2 == 1){
+		        	  }else if (wd.valueExists(cellValue) == false && Integer.parseInt(cellValue) % 2 == 1){
 		        		  cell2.setCellValue("False and odd");
-		        	  }else if (wdTest.valueExists(cellValue) == false && Integer.parseInt(cellValue) % 2 == 0){
+		        	  }else if (wd.valueExists(cellValue) == false && Integer.parseInt(cellValue) % 2 == 0){
 		        		  cell2.setCellValue("False and even");
 		        	  }
 
@@ -73,9 +73,9 @@ public class Excel {
 		        	  Cell cell2 = r.createCell(cn+1);
 		        	  
 		        	  String cellValue = c.getStringCellValue().trim();
-		        	  if (wdTest.valueExists(cellValue) == true){
+		        	  if (wd.valueExists(cellValue) == true){
 		        		  cell2.setCellValue("True");
-		        	  } else if (wdTest.valueExists(cellValue) == false){
+		        	  } else if (wd.valueExists(cellValue) == false){
 		        		  cell2.setCellValue("False");
 		        	  }
 		        	  
@@ -106,7 +106,7 @@ public class Excel {
 		FileOutputStream os = new FileOutputStream(filePath);
 		wb.write(os);
 		os.close();		
-		//wd.close();
+		wd.close();
 
 	}
 
