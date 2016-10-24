@@ -17,10 +17,10 @@ public class Excel {
 
 	private int maxRecords = NO_RECORD_LIMIT;
 	private WebDriver wd;
-
+	private String filePath = "";
 	void runQueries() throws Exception {
 
-		InputStream inp = new FileInputStream("extras/demo.xlsx");
+		InputStream inp = new FileInputStream(filePath);
 		XSSFWorkbook wb = new XSSFWorkbook(inp);
 		XSSFSheet sheet = wb.getSheetAt(0);
 
@@ -103,7 +103,7 @@ public class Excel {
 
 		inp.close();
 
-		FileOutputStream os = new FileOutputStream("extras/demo.xlsx");
+		FileOutputStream os = new FileOutputStream(filePath);
 		wb.write(os);
 		os.close();		
 		//wd.close();
@@ -123,6 +123,11 @@ public class Excel {
 		Excel e = new Excel();
 		e.runQueries();
 		
+		
+	}
+
+	public void setFilePath(String path) {
+		filePath = path;
 		
 	}
 
