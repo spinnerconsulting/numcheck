@@ -31,7 +31,7 @@ public class Excel {
 		//rowStart starts with 2, assuming 1st row is for the header info
 		
 		int rowStart= 2;
-		//Max row numbers in Excel is 65536 we will iterate over all of them. 
+		//Max row numbers in Excel is 1048576 we will iterate over all of them. 
 		//Traditional for loop is used, instead of rowItearator that skips nulls and other values
 		
 		int rowEnd  = Math.max(1048576, sheet.getLastRowNum());
@@ -55,22 +55,43 @@ public class Excel {
 		          }  else if (c.getCellType() == Cell.CELL_TYPE_NUMERIC){
 		        	  
 		        	  Cell cell2 = r.createCell(cn+1);
-		        	  cell2.setCellValue("True");
-
+		        	  
+		        	  String cellValue = NumberToTextConverter.toText(c.getNumericCellValue());
+		        	  
+		        	  if (wdTest.valueExists(cellValue) == true && Integer.parseInt(cellValue) % 2 == 1){
+		        		  cell2.setCellValue("True and odd");
+		        	  }else if (wdTest.valueExists(cellValue) == true && Integer.parseInt(cellValue) % 2 == 0){
+		        		  cell2.setCellValue("True and even");
+		        	  }else if (wdTest.valueExists(cellValue) == false && Integer.parseInt(cellValue) % 2 == 1){
+		        		  cell2.setCellValue("False and odd");
+		        	  }else if (wdTest.valueExists(cellValue) == false && Integer.parseInt(cellValue) % 2 == 0){
+		        		  cell2.setCellValue("False and even");
+		        	  }
 
 					
 		          } else if (c.getCellType() == Cell.CELL_TYPE_STRING){
-		        	 
+		        	  Cell cell2 = r.createCell(cn+1);
+		        	  
+		        	  String cellValue = c.getStringCellValue().trim();
+		        	  if (wdTest.valueExists(cellValue) == true){
+		        		  cell2.setCellValue("True");
+		        	  } else if (wdTest.valueExists(cellValue) == false){
+		        		  cell2.setCellValue("False");
+		        	  }
 		        	  
 		        			  
 		        			  
 		          } else if (c.getCellType() == Cell.CELL_TYPE_BLANK){
+		        	  //do something if blank
 		        	  continue;
 		          } else if (c.getCellType() == Cell.CELL_TYPE_BOOLEAN){
+		        	  //do something if bool
 		        	  continue;
 		          } else if (c.getCellType() == Cell.CELL_TYPE_ERROR){
+		        	  //do something if excell error cell
 		        	  continue;
 		          } else if (c.getCellType() == Cell.CELL_TYPE_FORMULA){
+		        	  //do something if formula
 		        	  continue;
 		          }
 		          
