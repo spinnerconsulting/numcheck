@@ -29,7 +29,6 @@ public class InspectorGadget {
 		
 		Options options = new Options();
 		options.addOption("help", "print this message and exit");
-		options.addOption("v", "verbose output for debugging");
 		options.addOption("u", true, "the username for web requests");
 		options.addOption("p", true, "the password for web requests");
 		options.addOption("path", true, "the path to the Excel source file");
