@@ -17,8 +17,9 @@ public class InspectorGadget {
 	 * 
 	 * Enter program arguments in the textarea. Example arguments:
 	 * 
-	 * -u testuser -p testpassword -path extras/demo.xlsx -base http://www.example.com
-	 * -max 1000 -s "test search string"
+	 * -u testuser -p testpassword -path extras/demo.xlsx -base
+	 * http://www.example.com -max 1000 -s "test search string" -g <path to
+	 * geckodriver executable file>
 	 * 
 	 * Entering no arguments will produce the -help console output.
 	 * 
@@ -26,19 +27,20 @@ public class InspectorGadget {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		
+
 		Options options = new Options();
 		options.addOption("help", "print this message and exit");
 		options.addOption("u", true, "the username for web requests");
 		options.addOption("p", true, "the password for web requests");
-		options.addOption("path", true, "the path to the Excel source file");
+		options.addOption("path", true, "the local path to the Excel source file");
 		options.addOption("max", true, "the max records to read from Excel source file [default: no limit]");
 		options.addOption("base", true, "the base URL to the host (ex: http://www.example.com)");
 		options.addOption("s", true, "the string to search for in the web response");
+		options.addOption("g", true, "the local path to the geckodriver executable file");
 
 		CommandLineParser parser = new DefaultParser();
 		HelpFormatter formatter = new HelpFormatter();
-		WebDriver wd = new WebDriver();
+		WebClient client = new WebClient();
 		Excel e = new Excel();
 
 		try {
@@ -50,10 +52,10 @@ public class InspectorGadget {
 			}
 
 			if (line.hasOption("u")) {
-				wd.setUsername(line.getOptionValue("u"));
+				client.setUsername(line.getOptionValue("u"));
 			}
 			if (line.hasOption("p")) {
-				wd.setPassword(line.getOptionValue("p"));
+				client.setPassword(line.getOptionValue("p"));
 			}
 			if (line.hasOption("path")) {
 				e.setFilePath(line.getOptionValue("path"));
@@ -62,10 +64,13 @@ public class InspectorGadget {
 				e.setMaxRecords(Integer.parseInt(line.getOptionValue("max")));
 			}
 			if (line.hasOption("base")) {
-				wd.setBaseUrl(line.getOptionValue("base"));
+				client.setBaseUrl(line.getOptionValue("base"));
 			}
 			if (line.hasOption("s")) {
-				wd.setSearchString(line.getOptionValue("s"));
+				client.setSearchString(line.getOptionValue("s"));
+			}
+			if (line.hasOption("g")) {
+				client.setGeckoDriverPath(line.getOptionValue("g"));
 			}
 
 		} catch (ParseException exp) {
@@ -74,10 +79,19 @@ public class InspectorGadget {
 			return;
 		}
 
-		wd.init();
-		e.setWebDriver(wd);
-		e.runQueries();
-		wd.close();
+		try {
+
+			client.init();
+			//e.setWebClient(client);
+			//e.runQueries();
+
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		} finally {
+			if (client != null) {
+				client.close();
+			}
+		}
 
 	}
 

@@ -25,7 +25,7 @@ public class Excel {
 	/**
 	 * The WebDriver object doing the web interactions.
 	 */
-	private WebDriver wd;
+	private WebClient client;
 
 	/**
 	 * Controller set file path where the xlsx file resides.
@@ -75,7 +75,7 @@ public class Excel {
 
 			if (cellValue != null) {
 				Cell cell2 = r.createCell(cn + 1);
-				cell2.setCellValue((wd.valueExists(cellValue) ? "Yes" : "No"));
+				cell2.setCellValue((client.valueExists(cellValue) ? "Yes" : "No"));
 			}
 
 		}
@@ -85,28 +85,20 @@ public class Excel {
 		FileOutputStream os = new FileOutputStream(filePath);
 		wb.write(os);
 		os.close();
-		wd.close();
+		client.close();
 
 	}
 
-	public void setMaxRecords(int i) {
+	void setMaxRecords(int i) {
 		maxRecords = i;
 	}
 
-	public void setWebDriver(WebDriver s) {
-		wd = s;
+	void setWebClient(WebClient s) {
+		client = s;
 	}
 
-	public void setFilePath(String path) {
+	void setFilePath(String path) {
 		filePath = path;
-	}
-
-	public static void main(String[] args) throws Exception {
-		Excel e = new Excel();
-		e.setFilePath("extras/demo.xlsx");
-		// e.setMaxRecords(50);
-		e.setWebDriver(new WebDriver());
-		e.runQueries();
 	}
 
 }
