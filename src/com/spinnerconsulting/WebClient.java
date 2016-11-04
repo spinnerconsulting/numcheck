@@ -1,9 +1,10 @@
 package com.spinnerconsulting;
 
-import java.util.concurrent.TimeUnit;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class WebClient {
 
@@ -23,9 +24,14 @@ public class WebClient {
 	private String baseUrl;
 
 	/**
-	 * The string used to compare a positive or negative response.
+	 * The string used to indicate a green condition.
 	 */
-	private String searchString;
+	private String greenString;
+
+	/**
+	 * The string used to compare a red condition.
+	 */
+	private String redString;
 
 	/**
 	 * GeckDriver is required to run FirefoxDriver.
@@ -50,20 +56,42 @@ public class WebClient {
 
 		System.setProperty("webdriver.gecko.driver", geckoDriverPath);
 		driver = new FirefoxDriver();
-		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.get(baseUrl + "/pkdata/mainform.aspx");
 
+		// sleep for a second to let the naughty AJAX catch-up
+		sleep(20000);
+
 		// username and password entry
+		driver.findElement(By.id("TRG_14")).click();
 		driver.findElement(By.id("TRG_14")).clear();
 		driver.findElement(By.id("TRG_14")).sendKeys(username);
+		driver.findElement(By.id("TRG_13")).click();
 		driver.findElement(By.id("TRG_13")).clear();
 		driver.findElement(By.id("TRG_13")).sendKeys(password);
 		// naughty field copying or something going on here, click this
 		driver.findElement(By.id("TRG_3")).click();
-		driver.findElement(By.cssSelector("span.cs3")).click();
+		driver.findElement(By.id("TRG_3")).sendKeys(username.replaceAll("[^0-9]+", ""));
+
+		// required by form for some reason
+		driver.findElement(By.id("TRG_14")).click();
+		driver.findElement(By.id("TRG_13")).click();
+		driver.findElement(By.id("TRG_3")).click();
+
+		sleep(4000);
+
+		if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+			driver.findElement(By.cssSelector("span.cs3")).click();
+		} else {
+			Actions action = new Actions(driver);
+			action.moveToElement(driver.findElement(By.cssSelector("span.cs3")));
+			driver.findElement(By.cssSelector("span.cs3")).click();
+		}
 
 		// tools link on the left side nav
-		//driver.findElement(By.id("TXT_44")).click();
+		(new WebDriverWait(driver, 30)).until(ExpectedConditions.presenceOfElementLocated(By.id("TXT_44")));
+		driver.findElement(By.id("TXT_44")).click();
+
+		sleep(20000);
 
 	}
 
@@ -74,15 +102,31 @@ public class WebClient {
 	 * @param query
 	 *            - The 10 digit number being inspected
 	 * @return - a boolean true indicating the value exists or false indicating
-	 *         the value does not exist
+	 *         the value does not exist.
 	 */
-	boolean valueExists(String query) {
+	boolean valueExists(String query) throws Exception {
 
-		driver.findElement(By.id("TRG_313")).click();
-		driver.findElement(By.id("TRG_313")).clear();
-		driver.findElement(By.id("TRG_313")).sendKeys(query);
-		driver.findElement(By.xpath("//div[@id='VWG_304']/div/div/div/div/div/span")).click();
-		return driver.getPageSource().contains(searchString);
+		String txtFldId = "TRG_345";
+		(new WebDriverWait(driver, 30)).until(ExpectedConditions.presenceOfElementLocated(By.id(txtFldId)));
+
+		driver.findElement(By.id(txtFldId)).click();
+		driver.findElement(By.id(txtFldId)).clear();
+		driver.findElement(By.id(txtFldId)).sendKeys(query);
+		Actions action = new Actions(driver);
+		String imgXpath = "//img[@src='Images.Magnifying.MagnifyingGlass_64.png.aspx']";
+		action.moveToElement(driver.findElement(By.xpath(imgXpath)));
+		sleep(1000);
+		driver.findElement(By.xpath(imgXpath)).click();
+
+		String content = driver.getPageSource();
+
+		if (content.contains(greenString)) {
+			return Boolean.TRUE;
+		} else if (content.contains(redString)) {
+			return Boolean.FALSE;
+		} else {
+			throw new Exception("Unable to locate green or red condition for number: " + query);
+		}
 
 	}
 
@@ -110,12 +154,12 @@ public class WebClient {
 		this.baseUrl = baseUrl;
 	}
 
-	String getSearchString() {
-		return searchString;
+	void setGreenString(String greenString) {
+		this.greenString = greenString;
 	}
 
-	void setSearchString(String searchString) {
-		this.searchString = searchString;
+	void setRedString(String redString) {
+		this.redString = redString;
 	}
 
 	String getGeckoDriverPath() {
@@ -124,6 +168,14 @@ public class WebClient {
 
 	void setGeckoDriverPath(String geckoDriverPath) {
 		this.geckoDriverPath = geckoDriverPath;
+	}
+
+	private void sleep(long seconds) {
+		try {
+			Thread.sleep(seconds);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

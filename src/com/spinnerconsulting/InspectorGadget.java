@@ -18,8 +18,8 @@ public class InspectorGadget {
 	 * Enter program arguments in the textarea. Example arguments:
 	 * 
 	 * -u testuser -p testpassword -path extras/demo.xlsx -base
-	 * http://www.example.com -max 1000 -s "test search string" -g <path to
-	 * geckodriver executable file>
+	 * http://www.example.com -max 1000 -green "test search string" -red
+	 * "test bad search string" -g <path to geckodriver executable file>
 	 * 
 	 * Entering no arguments will produce the -help console output.
 	 * 
@@ -35,7 +35,8 @@ public class InspectorGadget {
 		options.addOption("path", true, "the local path to the Excel source file");
 		options.addOption("max", true, "the max records to read from Excel source file [default: no limit]");
 		options.addOption("base", true, "the base URL to the host (ex: http://www.example.com)");
-		options.addOption("s", true, "the string to search for in the web response");
+		options.addOption("green", true, "the string to search for indicating a green response");
+		options.addOption("red", true, "the string to search for indicating a red response");
 		options.addOption("g", true, "the local path to the geckodriver executable file");
 
 		CommandLineParser parser = new DefaultParser();
@@ -61,13 +62,16 @@ public class InspectorGadget {
 				e.setFilePath(line.getOptionValue("path"));
 			}
 			if (line.hasOption("max")) {
-				e.setMaxRecords(Integer.parseInt(line.getOptionValue("max")));
+				e.setMaxRows(Integer.parseInt(line.getOptionValue("max")));
 			}
 			if (line.hasOption("base")) {
 				client.setBaseUrl(line.getOptionValue("base"));
 			}
-			if (line.hasOption("s")) {
-				client.setSearchString(line.getOptionValue("s"));
+			if (line.hasOption("green")) {
+				client.setGreenString(line.getOptionValue("green"));
+			}
+			if (line.hasOption("red")) {
+				client.setRedString(line.getOptionValue("red"));
 			}
 			if (line.hasOption("g")) {
 				client.setGeckoDriverPath(line.getOptionValue("g"));
@@ -82,8 +86,8 @@ public class InspectorGadget {
 		try {
 
 			client.init();
-			//e.setWebClient(client);
-			//e.runQueries();
+			e.setWebClient(client);
+			e.runQueries();
 
 		} catch (Exception e1) {
 			e1.printStackTrace();

@@ -15,12 +15,12 @@ public class Excel {
 	/**
 	 * Value when no record limit is specified by the controller.
 	 */
-	public static final int NO_RECORD_LIMIT = -1;
+	public static final int NO_ROW_LIMIT = -1;
 
 	/**
 	 * The maximum number of records configured to iterate over the rows.
 	 */
-	private int maxRecords = NO_RECORD_LIMIT;
+	private int maxRows = NO_ROW_LIMIT;
 
 	/**
 	 * The WebDriver object doing the web interactions.
@@ -43,13 +43,11 @@ public class Excel {
 		XSSFWorkbook wb = new XSSFWorkbook(inp);
 		XSSFSheet sheet = wb.getSheetAt(0);
 
-		int rowEnd = (maxRecords == NO_RECORD_LIMIT ? sheet.getLastRowNum()
-				: Math.min(maxRecords, sheet.getLastRowNum()));
-		// Excel rows start at 1, but POI starts at 0.
-		// Slight adjustments to account for this.
-		rowEnd++;
+		// maxRows begins at 1. getLastRowNum begins at 0
+		// reconcile rowEnd to begin at 0
+		int rowEnd = (maxRows == NO_ROW_LIMIT ? sheet.getLastRowNum() : Math.min(maxRows - 1, sheet.getLastRowNum()));
 
-		for (int rowNum = 1; rowNum < rowEnd; rowNum++) {
+		for (int rowNum = 0; rowNum <= rowEnd; rowNum++) {
 
 			Row r = sheet.getRow(rowNum);
 
@@ -75,7 +73,14 @@ public class Excel {
 
 			if (cellValue != null) {
 				Cell cell2 = r.createCell(cn + 1);
-				cell2.setCellValue((client.valueExists(cellValue) ? "Yes" : "No"));
+				try {
+					cell2.setCellValue((client.valueExists(cellValue) ? "Yes" : "No"));
+				} catch (Exception e) {
+					cell2.setCellValue("error");
+					e.printStackTrace();
+					continue;
+				}
+
 			}
 
 		}
@@ -89,8 +94,8 @@ public class Excel {
 
 	}
 
-	void setMaxRecords(int i) {
-		maxRecords = i;
+	void setMaxRows(int i) {
+		maxRows = i;
 	}
 
 	void setWebClient(WebClient s) {
