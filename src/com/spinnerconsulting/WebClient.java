@@ -49,7 +49,7 @@ public class WebClient {
 	 * 
 	 * Call after WebDriver object creation to setup environment.
 	 * 
-	 * Performs login and navigates to contextPage containing lookup form.
+	 * Performs login and navigates to page containing lookup form.
 	 * 
 	 */
 	void init() {
@@ -58,7 +58,7 @@ public class WebClient {
 		driver = new FirefoxDriver();
 		driver.get(baseUrl + "/pkdata/mainform.aspx");
 
-		// sleep for a second to let the naughty AJAX catch-up
+		// sleep for a second to let the AJAX calls catch-up
 		sleep(20000);
 
 		// username and password entry
@@ -91,6 +91,9 @@ public class WebClient {
 		(new WebDriverWait(driver, 30)).until(ExpectedConditions.presenceOfElementLocated(By.id("TXT_44")));
 		driver.findElement(By.id("TXT_44")).click();
 
+		// breathe 20 seconds to ensure all AJAX calls complete
+		// and the environment is fully ready to interact with
+		// Selenium
 		sleep(20000);
 
 	}
@@ -101,8 +104,11 @@ public class WebClient {
 	 * 
 	 * @param query
 	 *            - The 10 digit number being inspected
-	 * @return - a boolean true indicating the value exists or false indicating
-	 *         the value does not exist.
+	 * @return boolean true indicating the value exists or false indicating the
+	 *         value does not exist.
+	 * @throws Exception
+	 *             if there is a problem with the driver operating or locating
+	 *             elements.
 	 */
 	boolean valueExists(String query) throws Exception {
 
@@ -115,15 +121,17 @@ public class WebClient {
 		Actions action = new Actions(driver);
 		String imgXpath = "//img[@src='Images.Magnifying.MagnifyingGlass_64.png.aspx']";
 		action.moveToElement(driver.findElement(By.xpath(imgXpath)));
+		// delay a second to ensure the server does
+		// not get too many requests
 		sleep(1000);
 		driver.findElement(By.xpath(imgXpath)).click();
 
 		String content = driver.getPageSource();
 
 		if (content.contains(greenString)) {
-			return Boolean.TRUE;
+			return true;
 		} else if (content.contains(redString)) {
-			return Boolean.FALSE;
+			return false;
 		} else {
 			throw new Exception("Unable to locate green or red condition for number: " + query);
 		}
